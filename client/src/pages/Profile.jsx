@@ -1,0 +1,16 @@
+import React from 'react';
+import { useAuth } from '../context/AuthContext';
+
+const Profile = () => {
+    const { user, logout } = useAuth();
+    return (
+        <div className="container card fade-in">
+            <h1>Profile</h1>
+            <p><strong>Name:</strong> {user?.name}</p>
+            <p><strong>Email:</strong> {user?.email}</p>
+            <p><strong>Role:</strong> {user?.role}</p>
+            <button className="btn btn-primary" onClick={logout} style={{ marginTop: '1rem', background: 'var(--danger)' }}>Logout</button>
+        </div>
+    );
+};
+export default Profile;

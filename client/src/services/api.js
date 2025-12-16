@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: 'http://localhost:5001/api',
 });
 
 API.interceptors.request.use((req) => {
@@ -20,5 +20,7 @@ export const getIssues = () => API.get('/issues');
 export const assignIssue = (id, workerId) => API.put(`/issues/${id}/assign`, { workerId });
 export const resolveIssue = (id, data) => API.put(`/issues/${id}/resolve`, data);
 export const getSummary = () => API.get('/issues/summary');
+export const getPublicIssues = () => API.get('/issues/public');
+export const submitFeedback = (data) => API.post('/feedback', data);
 
 export default API;

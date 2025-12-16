@@ -3,7 +3,7 @@ const { enhanceIssueDescription, summarizeIssues, generateFeedback } = require('
 
 exports.createIssue = async (req, res) => {
     try {
-        const { title, description, location, images } = req.body;
+        const { title, description, location, images, category, audio } = req.body;
 
         // AI Enhancement
         const aiResult = await enhanceIssueDescription(description);
@@ -12,10 +12,11 @@ exports.createIssue = async (req, res) => {
             title,
             original_description: description,
             ai_enhanced_description: aiResult.enhanced_description,
-            category: aiResult.category,
+            category: category || aiResult.category, // Use user category if provided, else AI
             priority: aiResult.priority,
             location,
             images,
+            audio,
             reportedBy: req.user.id
         });
 
@@ -39,6 +40,16 @@ exports.getIssues = async (req, res) => {
         res.json(issues);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching issues', error: error.message });
+    }
+};
+
+exports.getPublicIssues = async (req, res) => {
+    try {
+        // Return all issues for map view (optimize fields if needed)
+        const issues = await Issue.find({}).select('title location category status createdAt').sort({ createdAt: -1 });
+        res.json(issues);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching public issues', error: error.message });
     }
 };
 

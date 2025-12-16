@@ -7,6 +7,12 @@ import Register from './pages/Register';
 import CitizenDashboard from './pages/CitizenDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import WorkerDashboard from './pages/WorkerDashboard';
+import ReportIssue from './pages/ReportIssue';
+import NearbyIssues from './pages/NearbyIssues';
+import MyReports from './pages/MyReports';
+import Notifications from './pages/Notifications';
+import Feedback from './pages/Feedback';
+import Profile from './pages/Profile';
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -28,6 +34,36 @@ const App = () => {
           <Route path="/citizen" element={
             <PrivateRoute allowedRoles={['citizen']}>
               <CitizenDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/citizen/report" element={
+            <PrivateRoute allowedRoles={['citizen']}>
+              <ReportIssue />
+            </PrivateRoute>
+          } />
+          <Route path="/citizen/map" element={
+            <PrivateRoute allowedRoles={['citizen']}>
+              <NearbyIssues />
+            </PrivateRoute>
+          } />
+          <Route path="/citizen/my-reports" element={
+            <PrivateRoute allowedRoles={['citizen']}>
+              <MyReports />
+            </PrivateRoute>
+          } />
+          <Route path="/citizen/notifications" element={
+            <PrivateRoute allowedRoles={['citizen']}>
+              <Notifications />
+            </PrivateRoute>
+          } />
+          <Route path="/citizen/feedback" element={
+            <PrivateRoute allowedRoles={['citizen']}>
+              <Feedback />
+            </PrivateRoute>
+          } />
+          <Route path="/citizen/profile" element={
+            <PrivateRoute allowedRoles={['citizen']}>
+              <Profile />
             </PrivateRoute>
           } />
 

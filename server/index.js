@@ -32,5 +32,6 @@ const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
     app.use('/api/auth', authRoutes);
     app.use('/api/issues', issueRoutes);
+    app.use('/api/feedback', require('./routes/feedbackRoutes'));
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
