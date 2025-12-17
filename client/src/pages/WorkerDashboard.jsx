@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { getIssues, resolveIssue } from '../services/api';
 import { CheckSquare } from 'lucide-react';
 import ImageUpload from '../components/ImageUpload';
+import { useLanguage } from '../context/LanguageContext';
 
 const WorkerDashboard = () => {
+    const { t } = useLanguage();
     const [issues, setIssues] = useState([]);
     const [selectedIssue, setSelectedIssue] = useState(null);
     const [resolutionData, setResolutionData] = useState({ remark: '', proofImage: '' });
@@ -31,7 +33,7 @@ const WorkerDashboard = () => {
 
     return (
         <div>
-            <h1 style={{ marginBottom: '2rem' }}>My Tasks</h1>
+            <h1 style={{ marginBottom: '2rem' }}>{t('my_assigned_tasks')}</h1>
 
             {selectedIssue && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
@@ -71,15 +73,18 @@ const WorkerDashboard = () => {
 
                         {issue.status === 'In Progress' && (
                             <button className="btn btn-primary" onClick={() => setSelectedIssue(issue._id)}>
-                                <CheckSquare size={18} style={{ marginRight: '0.5rem' }} /> Mark Resolved
+                                <CheckSquare size={18} style={{ marginRight: '0.5rem' }} /> {t('submit_verification')}
                             </button>
                         )}
                         {issue.status === 'Resolved' && (
-                            <p style={{ fontSize: '0.9rem', color: 'var(--success)' }}>Completed on {new Date(issue.updatedAt).toLocaleDateString()}</p>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--success)' }}>{t('completed_on')} {new Date(issue.updatedAt).toLocaleDateString()}</p>
+                        )}
+                        {issue.status === 'Pending Verification' && (
+                            <p style={{ fontSize: '0.9rem', color: '#8b5cf6', fontWeight: 'bold' }}>{t('under_review')}</p>
                         )}
                     </div>
                 ))}
-                {issues.length === 0 && <p>No tasks assigned.</p>}
+                {issues.length === 0 && <p>{t('no_tasks')}</p>}
             </div>
         </div>
     );

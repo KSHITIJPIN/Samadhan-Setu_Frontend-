@@ -86,14 +86,14 @@ exports.resolveIssue = async (req, res) => {
         const issue = await Issue.findById(issueId);
         if (!issue) return res.status(404).json({ message: 'Issue not found' });
 
-        issue.status = 'Resolved';
+        issue.status = 'Pending Verification';
 
         // Generate AI Feedback
         const feedback = await generateFeedback(issue.title, remark);
         issue.ai_feedback = feedback;
 
         issue.status_history.push({
-            status: 'Resolved',
+            status: 'Pending Verification',
             updatedBy: req.user.id,
             proofImage,
             remark
@@ -103,6 +103,46 @@ exports.resolveIssue = async (req, res) => {
         res.json(issue);
     } catch (error) {
         res.status(500).json({ message: 'Error resolving issue', error: error.message });
+    }
+};
+
+exports.verifyIssue = async (req, res) => {
+    try {
+        const { issueId } = req.params;
+        const issue = await Issue.findById(issueId);
+        if (!issue) return res.status(404).json({ message: 'Issue not found' });
+
+        issue.status = 'Resolved';
+        issue.status_history.push({
+            status: 'Resolved',
+            updatedBy: req.user.id,
+            remark: 'Verified by Admin'
+        });
+
+        await issue.save();
+        res.json(issue);
+    } catch (error) {
+        res.status(500).json({ message: 'Error verifying issue', error: error.message });
+    }
+};
+
+exports.dismissIssue = async (req, res) => {
+    try {
+        const { issueId } = req.params;
+        const issue = await Issue.findById(issueId);
+        if (!issue) return res.status(404).json({ message: 'Issue not found' });
+
+        issue.status = 'In Progress'; // Revert to In Progress
+        issue.status_history.push({
+            status: 'In Progress',
+            updatedBy: req.user.id,
+            remark: 'Resolution dismissed by Admin'
+        });
+
+        await issue.save();
+        res.json(issue);
+    } catch (error) {
+        res.status(500).json({ message: 'Error dismissing issue', error: error.message });
     }
 };
 

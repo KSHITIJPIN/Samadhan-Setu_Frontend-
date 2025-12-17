@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -24,7 +25,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
 const App = () => {
   return (
-    <>
+    <LanguageProvider>
       <Navbar />
       <div className="container" style={{ padding: '2rem 1rem' }}>
         <Routes>
@@ -82,7 +83,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
-    </>
+    </LanguageProvider>
   );
 };
 

@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 const issueRoutes = require('./routes/issueRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 const app = express();
 
@@ -33,5 +34,6 @@ connectDB().then(() => {
     app.use('/api/auth', authRoutes);
     app.use('/api/issues', issueRoutes);
     app.use('/api/feedback', require('./routes/feedbackRoutes'));
+    app.use('/api/ai', aiRoutes);
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });

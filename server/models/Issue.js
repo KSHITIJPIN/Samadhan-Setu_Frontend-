@@ -11,8 +11,9 @@ const issueSchema = new mongoose.Schema({
         lng: { type: Number },
         address: { type: String } // Optional address string
     },
+    zone: { type: String, enum: ['North Zone', 'South Zone', 'East Zone', 'West Zone'], default: 'North Zone' },
     images: [{ type: String }], // URLs or base64
-    status: { type: String, enum: ['Pending', 'In Progress', 'Resolved'], default: 'Pending' },
+    status: { type: String, enum: ['Pending', 'In Progress', 'Pending Verification', 'Resolved', 'Failed'], default: 'Pending' },
     reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     status_history: [{

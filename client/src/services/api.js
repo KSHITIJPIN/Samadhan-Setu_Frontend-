@@ -19,6 +19,12 @@ export const createIssue = (issueData) => API.post('/issues', issueData);
 export const getIssues = () => API.get('/issues');
 export const assignIssue = (id, workerId) => API.put(`/issues/${id}/assign`, { workerId });
 export const resolveIssue = (id, data) => API.put(`/issues/${id}/resolve`, data);
+// Verify Issue (Admin Only)
+export const verifyIssue = (id) => API.put(`/issues/${id}/verify`);
+
+// Dismiss Issue (Admin Only)
+export const dismissIssue = (id) => API.put(`/issues/${id}/dismiss`);
+
 export const getSummary = () => API.get('/issues/summary');
 export const getPublicIssues = () => API.get('/issues/public');
 export const submitFeedback = (data) => API.post('/feedback', data);

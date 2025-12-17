@@ -1,14 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Map, FileText, Bell, MessageSquare, User } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const DashboardGrid = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
 
     const menuItems = [
         // Saffron - Action/Revolution
         {
-            title: 'Report',
+            title: t('report_issue'),
             icon: <PlusCircle size={28} />,
             path: '/citizen/report',
             gradient: 'linear-gradient(135deg, #FF9933 0%, #E65100 100%)', // Indian Saffron
@@ -16,7 +18,7 @@ const DashboardGrid = () => {
         },
         // Green - Environment/Maps
         {
-            title: 'Map',
+            title: t('nearby_issues'),
             icon: <Map size={28} />,
             path: '/citizen/map',
             gradient: 'linear-gradient(135deg, #138808 0%, #064E3B 100%)', // Indian Green
@@ -24,7 +26,7 @@ const DashboardGrid = () => {
         },
         // Navy Blue - History/Records (Chakra color)
         {
-            title: 'History',
+            title: t('my_reports'),
             icon: <FileText size={28} />,
             path: '/citizen/my-reports',
             gradient: 'linear-gradient(135deg, #000080 0%, #1E3A8A 100%)', // Navy Blue
@@ -32,7 +34,7 @@ const DashboardGrid = () => {
         },
         // Gold/Orange - Alerts
         {
-            title: 'Alerts',
+            title: t('notifications'),
             icon: <Bell size={28} />,
             path: '/citizen/notifications',
             gradient: 'linear-gradient(135deg, #F59E0B 0%, #B45309 100%)', // Golden Warning
@@ -40,7 +42,7 @@ const DashboardGrid = () => {
         },
         // Teal/Blue - Feedback
         {
-            title: 'Feedback',
+            title: t('feedback'),
             icon: <MessageSquare size={28} />,
             path: '/citizen/feedback',
             gradient: 'linear-gradient(135deg, #0891B2 0%, #155E75 100%)', // Teal Modern
@@ -48,7 +50,7 @@ const DashboardGrid = () => {
         },
         // Deep Purple/Pink - Profile
         {
-            title: 'Profile',
+            title: t('profile'),
             icon: <User size={28} />,
             path: '/citizen/profile',
             gradient: 'linear-gradient(135deg, #BE185D 0%, #831843 100%)', // Deep Pink

@@ -66,7 +66,7 @@ a {
 .btn-secondary {
   background: var(--surface);
   color: var(--text);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-danger {
@@ -78,15 +78,15 @@ a {
   background: var(--surface);
   border-radius: var(--radius);
   padding: 1.5rem;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: var(--shadow);
 }
 
 .input {
   width: 100%;
   padding: 0.75rem;
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius);
   color: var(--text);
   font-size: 1rem;
@@ -111,28 +111,59 @@ a {
   text-transform: uppercase;
 }
 
-.badge-pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-.badge-progress { background: rgba(99, 102, 241, 0.2); color: var(--primary); }
-.badge-resolved { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+.badge-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--warning);
+}
+
+.badge-progress {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--primary);
+}
+
+.badge-resolved {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--success);
+}
+
+.badge-pending-verification {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8b5cf6;
+}
+
+/* Violet */
 
 .grid {
   display: grid;
   gap: 1.5rem;
 }
 
-.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-1 {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
 
 @media (min-width: 768px) {
-  .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 nav {
   background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -150,5 +181,6 @@ nav {
   font-weight: 800;
   background: linear-gradient(to right, #6366f1, #ec4899);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
 }

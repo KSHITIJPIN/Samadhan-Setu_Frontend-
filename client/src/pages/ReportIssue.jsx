@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createIssue } from '../services/api';
+import { useNavigate, useLocation } from 'react-router-dom';
+import API, { createIssue } from '../services/api';
 import CategorySelection from '../components/CategorySelection';
 import ImageUpload from '../components/ImageUpload';
 import { MapPin, Loader2, ArrowLeft, Mic, Square, Trash2, StopCircle } from 'lucide-react';
@@ -23,7 +23,16 @@ L.Marker.prototype.options.icon = DefaultIcon;
 const ReportIssue = () => {
     const [step, setStep] = useState(1);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [formData, setFormData] = useState({ title: '', description: '', location: { address: '', lat: 28.6139, lng: 77.2090 }, images: [], audio: '' });
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        category: '',
+        priority: 'Medium',
+        zone: 'North Zone',
+        location: { lat: 20.5937, lng: 78.9629, address: '' },
+        images: [],
+        audio: null
+    });
     const [submitting, setSubmitting] = useState(false);
 
     // Audio State
@@ -31,18 +40,50 @@ const ReportIssue = () => {
     const [audioBlob, setAudioBlob] = useState(null);
     const [audioUrl, setAudioUrl] = useState(null);
     const [recordingTime, setRecordingTime] = useState(0);
+    const [transcript, setTranscript] = useState('');
+    const [processingVoice, setProcessingVoice] = useState(false);
+    const [voiceLang, setVoiceLang] = useState('en-US'); // Default English
+
     const mediaRecorderRef = useRef(null);
+    const recognitionRef = useRef(null);
+    const transcriptRef = useRef(''); // Ref for latest transcript
     const audioChunksRef = useRef([]);
     const timerRef = useRef(null);
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Handle Voice Data Pre-fill (From Navigation)
+    useEffect(() => {
+        if (location.state?.voiceData) {
+            const { title, description_clean_english, category } = location.state.voiceData;
+
+            if (category) {
+                setSelectedCategory(category);
+                setStep(2);
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                title: title || prev.title,
+                description: description_clean_english || prev.description
+            }));
+
+            // Clear state so it doesn't re-trigger on simple re-renders
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state]);
 
     // Map Location Marker Component
     const LocationMarker = () => {
         useMapEvents({
             click(e) {
                 const { lat, lng } = e.latlng;
-                setFormData(prev => ({ ...prev, location: { ...prev.location, lat, lng, address: `${lat.toFixed(4)}, ${lng.toFixed(4)}` } }));
+                // If address is empty or looks like coordinates, update it. Otherwise keep user's text.
+                const isCoord = /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(formData.location.address);
+                const newAddress = (formData.location.address === '' || isCoord) ? `${lat.toFixed(4)}, ${lng.toFixed(4)}` : formData.location.address;
+
+                setFormData(prev => ({ ...prev, location: { ...prev.location, lat, lng, address: newAddress } }));
             },
         });
 
@@ -89,6 +130,7 @@ const ReportIssue = () => {
 
     const startRecording = async () => {
         try {
+            // 1. Start Media Recorder
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const mimeType = getSupportedMimeType();
             mediaRecorderRef.current = new MediaRecorder(stream, mimeType ? { mimeType } : {});
@@ -115,6 +157,32 @@ const ReportIssue = () => {
             };
 
             mediaRecorderRef.current.start();
+
+            // 2. Start Speech Recognition (RESTORED)
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = true; // Keep listening
+                recognition.interimResults = true;
+                recognition.lang = voiceLang; // Use selected language
+
+                recognition.onresult = (event) => {
+                    let fullTranscript = '';
+                    // Iterate through ALL results to build the complete transcript
+                    for (let i = 0; i < event.results.length; ++i) {
+                        fullTranscript += event.results[i][0].transcript;
+                    }
+                    setTranscript(fullTranscript);
+                    // Update ref for immediate access in stopRecording
+                    transcriptRef.current = fullTranscript;
+                };
+
+                recognition.onerror = (e) => console.error("Speech Error", e);
+
+                recognitionRef.current = recognition;
+                recognitionRef.current.start();
+            }
+
             setRecording(true);
             setRecordingTime(0);
 
@@ -129,11 +197,54 @@ const ReportIssue = () => {
         }
     };
 
-    const stopRecording = () => {
-        if (mediaRecorderRef.current && recording) {
-            mediaRecorderRef.current.stop();
+    const stopRecording = async () => {
+        if (recording) {
+            // Stop Media Recorder
+            if (mediaRecorderRef.current) {
+                mediaRecorderRef.current.stop();
+            }
+            // Stop Speech Recognition
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+            }
+
             setRecording(false);
             clearInterval(timerRef.current);
+
+            // Process Transcript with AI (RESTORED)
+            const finalTranscript = transcriptRef.current;
+            console.log("Stopping recording. Final Transcript:", finalTranscript);
+
+            // Only process if we have a meaningful transcript
+            if (finalTranscript && finalTranscript.trim().length > 1) {
+                setProcessingVoice(true);
+                try {
+                    const { data } = await API.post('/ai/process-voice', { text: finalTranscript });
+                    console.log("AI Processed Result:", data);
+
+                    if (data.success && data.data) {
+                        const { title, description_clean_english, category } = data.data;
+
+                        // Auto-fill form
+                        setFormData(prev => ({
+                            ...prev,
+                            title: title || prev.title,
+                            description: description_clean_english || finalTranscript // Fallback to raw transcript
+                        }));
+                    }
+                } catch (error) {
+                    console.error("Voice Processing Failed", error);
+                    // Fallback: just put transcription in description
+                    setFormData(prev => ({
+                        ...prev,
+                        description: finalTranscript
+                    }));
+                } finally {
+                    setProcessingVoice(false);
+                }
+            } else {
+                console.warn("Transcript too short to process.");
+            }
         }
     };
 
@@ -204,6 +315,19 @@ const ReportIssue = () => {
             <div className="card">
                 <h2 style={{ marginBottom: '1.5rem' }}>Report: {selectedCategory}</h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1">
+                    <select
+                        className="input"
+                        value={formData.zone}
+                        onChange={e => setFormData({ ...formData, zone: e.target.value })}
+                        required
+                        style={{ flex: 1, marginBottom: '1rem' }}
+                    >
+                        <option value="">{t('select_category')}</option>
+                        <option value="North Zone">North Zone</option>
+                        <option value="South Zone">South Zone</option>
+                        <option value="East Zone">East Zone</option>
+                        <option value="West Zone">West Zone</option>
+                    </select>
                     <input
                         className="input"
                         placeholder="Issue Title"
@@ -225,8 +349,29 @@ const ReportIssue = () => {
                         <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 600 }}>Voice Description (Optional)</label>
 
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', background: '#f9fafb', padding: '0.75rem', borderRadius: '8px' }}>
+                            {!recording && (
+                                <select
+                                    value={voiceLang}
+                                    onChange={(e) => setVoiceLang(e.target.value)}
+                                    style={{
+                                        padding: '0.5rem',
+                                        borderRadius: '6px',
+                                        border: '1px solid #d1d5db',
+                                        fontSize: '0.85rem',
+                                        background: 'white',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <option value="en-US">English</option>
+                                    <option value="hi-IN">Hindi (हिंदी)</option>
+                                    <option value="mr-IN">Marathi (मराठी)</option>
+                                    <option value="ta-IN">Tamil (தமிழ்)</option>
+                                    <option value="ur-IN">Urdu (اردو)</option>
+                                </select>
+                            )}
+
                             {/* Controls */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, justifyContent: recording ? 'flex-start' : 'flex-end' }}>
                                 {!recording && !audioUrl ? (
                                     <button type="button" className="btn" onClick={startRecording} style={{ background: 'transparent', color: '#dc2626', border: '1px solid #dc2626', display: 'flex', alignItems: 'center', padding: '0.5rem 1rem' }}>
                                         <Mic size={18} style={{ marginRight: '0.5rem' }} /> Tap to Record
@@ -252,13 +397,36 @@ const ReportIssue = () => {
                                 )}
                             </div>
                         </div>
+
+                        {(recording || transcript || processingVoice) && (
+                            <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                {processingVoice ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', fontSize: '0.9rem' }}>
+                                        <Loader2 className="animate-spin" size={14} /> Processing voice description...
+                                    </div>
+                                ) : (
+                                    <p style={{ fontSize: '0.9rem', color: '#64748b', fontStyle: 'italic', margin: 0 }}>
+                                        {transcript || "Listening..."}
+                                    </p>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     <div style={{ marginBottom: '1rem' }}>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                             <MapPin size={16} style={{ display: 'inline', marginRight: '5px' }} />
-                            Select Location (Tap on map)
+                            Location
                         </label>
+
+                        <input
+                            className="input"
+                            placeholder="Address / Landmark (e.g., Near City Center)"
+                            value={formData.location.address}
+                            onChange={e => setFormData({ ...formData, location: { ...formData.location, address: e.target.value } })}
+                            style={{ marginBottom: '0.5rem' }}
+                        />
+
                         <div style={{ height: '300px', borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--border)' }}>
                             <MapContainer center={[formData.location.lat, formData.location.lng]} zoom={13} style={{ height: '100%', width: '100%' }}>
                                 <TileLayer
@@ -268,7 +436,7 @@ const ReportIssue = () => {
                                 <LocationMarker />
                             </MapContainer>
                         </div>
-                        {formData.location.address && <p style={{ fontSize: '0.85rem', marginTop: '0.5rem' }}>Selected: <b>{formData.location.address}</b></p>}
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>* Tap map to auto-fill coordinates. You can edit the address above.</p>
                     </div>
 
                     <ImageUpload onImageSelect={(base64) => setFormData({ ...formData, imageInput: base64 })} label="Evidence Photo" />
