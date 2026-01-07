@@ -1016,16 +1016,7 @@ const AdminDashboard = () => {
 
     return (
         <div style={{ display: 'flex', minHeight: '100vh', position: 'relative' }}>
-            {/* BACKGROUND LAYER */}
-            <div style={{
-                position: 'fixed',
-                inset: 0,
-                backgroundImage: 'url(/admin-theme-v3.jpg)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(8px) brightness(0.6)',
-                zIndex: 0 // Behind sidebar (1000) and overlay (900) but content is flex. Wait, zIndex -1 is better.
-            }} />
+            {/* BACKGROUND LAYER REMOVED (Global in App.jsx) */}
 
             {/* SIDEBAR (Collapsible) */}
             <div style={{

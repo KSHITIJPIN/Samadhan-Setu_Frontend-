@@ -31,6 +31,17 @@ const App = () => {
     <ThemeProvider>
       <LanguageProvider>
         <Navbar />
+        {/* GLOBAL BACKGROUND */}
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundImage: 'url(/admin-theme-v3.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(8px) brightness(0.6)',
+          zIndex: -1
+        }} />
+
         <div className="container" style={{ padding: '2rem 1rem' }}>
           <Routes>
             <Route path="/login" element={<Login />} />
