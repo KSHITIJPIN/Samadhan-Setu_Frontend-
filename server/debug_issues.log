@@ -48,3 +48,33 @@
 [2026-01-07T07:30:09.784Z] [getIssues] Found 1 issues.
 [2026-01-07T07:30:11.800Z] [getIssues] Fetching for User: 695e09a0dd05aa30e142ae2a (admin), Query: {}
 [2026-01-07T07:30:11.806Z] [getIssues] Found 1 issues.
+[2026-01-07T07:32:13.174Z] [getIssues] Fetching for User: 695e0a03dd05aa30e142ae33 (worker), Query: {"assignedTo":"695e0a03dd05aa30e142ae33"}
+[2026-01-07T07:32:13.178Z] [getIssues] Found 1 issues.
+[2026-01-07T07:38:29.201Z] [getIssues] Fetching for User: 695e0a03dd05aa30e142ae33 (worker), Query: {"assignedTo":"695e0a03dd05aa30e142ae33"}
+[2026-01-07T07:38:29.205Z] [getIssues] Found 1 issues.
+[2026-01-07T07:38:40.309Z] [getIssues] Fetching for User: 695e09a0dd05aa30e142ae2a (admin), Query: {}
+[2026-01-07T07:38:40.312Z] [getIssues] Found 1 issues.
+[2026-01-07T07:46:42.282Z] [getIssues] Fetching for User: 695e0a03dd05aa30e142ae33 (worker), Query: {"assignedTo":"695e0a03dd05aa30e142ae33"}
+[2026-01-07T07:46:42.287Z] [getIssues] Found 1 issues.
+[2026-01-07T09:15:59.997Z] [getIssues] Fetching for User: 695e0a03dd05aa30e142ae33 (worker), Query: {"assignedTo":"695e0a03dd05aa30e142ae33"}
+[2026-01-07T09:16:00.009Z] [getIssues] Found 1 issues.
+[2026-01-07T09:16:00.014Z] [getIssues] Fetching for User: 695e0a03dd05aa30e142ae33 (worker), Query: {"assignedTo":"695e0a03dd05aa30e142ae33"}
+[2026-01-07T09:16:00.019Z] [getIssues] Found 1 issues.
+[2026-01-07T09:17:22.713Z] [getIssues] Fetching for User: 695e09a0dd05aa30e142ae2a (admin), Query: {}
+[2026-01-07T09:17:22.744Z] [getIssues] Found 1 issues.
+[2026-01-07T09:25:07.933Z] [getIssues] Fetching for User: 695e0a03dd05aa30e142ae33 (worker), Query: {"assignedTo":"695e0a03dd05aa30e142ae33"}
+[2026-01-07T09:25:07.937Z] [getIssues] Found 1 issues.
+[2026-01-07T16:14:19.191Z] [getIssues] Fetching for User: 695e85e99654ae3999cc5464 (admin), Query: {}
+[2026-01-07T16:14:19.233Z] [getIssues] Found 0 issues.
+[2026-01-07T16:14:30.865Z] [getIssues] Fetching for User: 695e85e99654ae3999cc5464 (admin), Query: {}
+[2026-01-07T16:14:30.941Z] [getIssues] Found 0 issues.
+[2026-01-07T16:14:33.993Z] [getIssues] Fetching for User: 695e85e99654ae3999cc5464 (admin), Query: {}
+[2026-01-07T16:14:34.072Z] [getIssues] Found 0 issues.
+[2026-01-07T16:15:32.236Z] [getIssues] Fetching for User: 695e86529654ae3999cc546a (worker), Query: {"assignedTo":"695e86529654ae3999cc546a"}
+[2026-01-07T16:15:32.318Z] [getIssues] Found 0 issues.
+[2026-01-07T16:21:26.006Z] [getIssues] Fetching for User: 695e86529654ae3999cc546a (worker), Query: {"assignedTo":"695e86529654ae3999cc546a"}
+[2026-01-07T16:21:26.036Z] [getIssues] Found 0 issues.
+[2026-01-07T16:21:46.966Z] [getIssues] Fetching for User: 695e86529654ae3999cc546a (worker), Query: {"assignedTo":"695e86529654ae3999cc546a"}
+[2026-01-07T16:21:47.019Z] [getIssues] Fetching for User: 695e86529654ae3999cc546a (worker), Query: {"assignedTo":"695e86529654ae3999cc546a"}
+[2026-01-07T16:21:47.022Z] [getIssues] Found 0 issues.
+[2026-01-07T16:21:47.123Z] [getIssues] Found 0 issues.

@@ -20,7 +20,8 @@ const Navbar = () => {
     return (
         <nav>
             <div className="container nav-content">
-                <Link to="/" className="logo">
+                <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <img src="/logo.jpg" alt="Logo" style={{ height: '40px', width: '40px', objectFit: 'contain', borderRadius: '50%' }} />
                     Samadhan Setu
                 </Link>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

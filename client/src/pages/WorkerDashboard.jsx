@@ -7,20 +7,19 @@ import {
 } from 'lucide-react';
 import ImageUpload from '../components/ImageUpload';
 import { useLanguage } from '../context/LanguageContext';
-
 import { useAuth } from '../context/AuthContext';
 
 const WorkerDashboard = () => {
     const { t } = useLanguage();
-    const { user } = useAuth(); // Get user from context
+    const { user } = useAuth();
     const [issues, setIssues] = useState([]);
     const [selectedIssue, setSelectedIssue] = useState(null);
     const [resolutionData, setResolutionData] = useState({ remark: '', proofImage: '' });
 
     // UI State
     const [activeTab, setActiveTab] = useState('dashboard');
-    const [tasksCompleted, setTasksCompleted] = useState(2); // Mock for UI match
-    const [totalTasks, setTotalTasks] = useState(5);         // Mock for UI match
+    const [tasksCompleted, setTasksCompleted] = useState(2);
+    const [totalTasks, setTotalTasks] = useState(5);
 
     useEffect(() => {
         fetchData();
@@ -29,7 +28,6 @@ const WorkerDashboard = () => {
     const fetchData = async () => {
         const { data } = await getIssues();
         setIssues(data);
-        // Auto-select first issue if available for the details view
         if (data.length > 0 && !selectedIssue) {
             setSelectedIssue(data[0]);
         }
@@ -41,7 +39,6 @@ const WorkerDashboard = () => {
             await resolveIssue(selectedIssue._id, resolutionData);
             setResolutionData({ remark: '', proofImage: '' });
             fetchData();
-            // Move to next issue or clear selection
             const currentIndex = issues.findIndex(i => i._id === selectedIssue._id);
             if (currentIndex < issues.length - 1) {
                 setSelectedIssue(issues[currentIndex + 1]);
@@ -52,23 +49,23 @@ const WorkerDashboard = () => {
     };
 
     return (
-        <div style={{ display: 'flex', height: '100vh', background: '#f3f4f6', fontFamily: 'Inter, sans-serif' }}>
-
-            {/* SIDEBAR */}
+        <div style={{ display: 'flex', height: '100vh', fontFamily: 'Inter, sans-serif' }}>
+            {/* SIDEBAR - Glassmorphism */}
             <aside style={{
-                width: '260px',
-                background: '#064e3b', // Bottle Green
-                borderRight: '1px solid #065f46',
+                width: '280px',
+                background: 'rgba(0, 0, 0, 0.2)', // More transparent to match header
+                backdropFilter: 'blur(12px)',
+                borderRight: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 flexDirection: 'column',
                 flexShrink: 0,
                 color: 'white'
             }}>
                 {/* Brand */}
-                <div style={{ padding: '1.5rem', borderBottom: '1px solid #065f46', marginBottom: '1rem' }}>
+                <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{
-                            width: '32px', height: '32px', background: 'rgba(255,255,255,0.2)', borderRadius: '8px',
+                            width: '32px', height: '32px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '8px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
                         }}>
                             <Leaf size={20} fill="white" />
@@ -77,43 +74,43 @@ const WorkerDashboard = () => {
                     </div>
                 </div>
 
-                {/* Profile Widget (Styled for Dark Sidebar) */}
+                {/* Profile Widget */}
                 <div style={{ padding: '0 1rem', marginBottom: '1.5rem' }}>
                     <div style={{
-                        background: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '1rem',
-                        display: 'flex', alignItems: 'center', gap: '0.75rem', border: '1px solid rgba(255,255,255,0.1)'
+                        background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px', padding: '1rem',
+                        display: 'flex', alignItems: 'center', gap: '0.75rem', border: '1px solid rgba(255, 255, 255, 0.1)'
                     }}>
                         <div style={{
-                            width: '40px', height: '40px', borderRadius: '50%', background: '#374151',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
+                            width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.1)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', overflow: 'hidden'
                         }}>
-                            <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="User" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                            <img src={user?.avatar || "https://i.pravatar.cc/150?u=a042581f4e29026024d"} alt="User" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
                         <div>
                             <h3 style={{ fontSize: '0.875rem', fontWeight: '700', color: 'white', margin: 0 }}>{user?.name || 'Worker'}</h3>
-                            <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', margin: 0 }}>{user?.role || 'Field Worker'}</p>
+                            <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>{user?.role || 'Field Worker'}</p>
                         </div>
                     </div>
                     {/* Stats Row */}
                     <div style={{ display: 'flex', marginTop: '0.75rem', gap: '0.5rem' }}>
-                        <div style={{ background: 'rgba(255,255,255,0.2)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', color: 'white', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', color: 'white', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                             <Leaf size={12} /> 1,280 pts
                         </div>
-                        <div style={{ background: 'rgba(255,255,255,0.2)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', color: 'white', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', color: 'white', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                             ★ 4.7
                         </div>
                     </div>
                 </div>
 
                 {/* Navigation */}
-                <nav style={{ padding: '0 1rem', flex: 1 }}>
-                    <div style={{ marginBottom: '0.5rem', paddingLeft: '0.75rem', fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
+                <nav style={{ padding: '0 1rem', flex: 1, background: 'transparent', backdropFilter: 'none', border: 'none' }}>
+                    <div style={{ marginBottom: '0.5rem', paddingLeft: '0.75rem', fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.5)', textTransform: 'uppercase' }}>
                         Menu
                     </div>
                     {[
                         { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
                         { id: 'tasks', icon: ListTodo, label: 'My Tasks' },
-                        { id: 'total_reports', icon: FileText, label: 'Total Reports' }, // Added Total Reports
+                        { id: 'total_reports', icon: FileText, label: 'Total Reports' },
                         { id: 'map', icon: MapIcon, label: 'Map View' },
                         { id: 'history', icon: History, label: 'History' },
                     ].map(item => (
@@ -124,12 +121,13 @@ const WorkerDashboard = () => {
                                 display: 'flex', alignItems: 'center', gap: '0.75rem',
                                 width: '100%', padding: '0.75rem 1rem',
                                 borderRadius: '8px', border: 'none',
-                                background: activeTab === item.id ? 'white' : 'transparent',
-                                color: activeTab === item.id ? '#064e3b' : 'rgba(255,255,255,0.7)', // Active: Bottle Green text, Inactive: White text
-                                fontSize: '0.875rem', fontWeight: activeTab === item.id ? '700' : '500',
+                                background: activeTab === item.id ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+                                color: activeTab === item.id ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '0.9rem', fontWeight: activeTab === item.id ? '600' : '500',
                                 cursor: 'pointer', marginBottom: '0.5rem',
                                 textAlign: 'left',
-                                transition: 'all 0.2s'
+                                transition: 'all 0.2s',
+                                backdropFilter: activeTab === item.id ? 'blur(8px)' : 'none'
                             }}
                         >
                             <item.icon size={18} /> {item.label}
@@ -137,37 +135,45 @@ const WorkerDashboard = () => {
                     ))}
                 </nav>
 
-                <div style={{ padding: '1rem', borderTop: '1px solid #065f46', marginTop: 'auto' }}>
-                    <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>Government of India</p>
+                <div style={{ padding: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)', marginTop: 'auto' }}>
+                    <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)', textAlign: 'center' }}>Government of India</p>
                 </div>
             </aside>
 
-            {/* MAIN CONTENT */}
-            <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            {/* MAIN CONTENT - Transparent background */}
+            <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
 
-                {/* Top Header */}
+                {/* Top Header - Glassmorphism */}
                 <header style={{
-                    height: '64px', background: 'white', borderBottom: '1px solid #e5e7eb',
+                    height: '70px',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    backdropFilter: 'blur(10px)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem'
                 }}>
                     <div style={{ position: 'relative', width: '400px' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.5)' }} />
                         <input
                             type="text"
                             placeholder="Search task, location, sector"
                             style={{
-                                width: '100%', padding: '0.5rem 1rem 0.5rem 2.5rem',
-                                background: '#f3f4f6', border: 'none', borderRadius: '8px',
-                                outline: 'none', color: '#374151'
+                                width: '100%', padding: '0.6rem 1rem 0.6rem 2.5rem',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: '8px',
+                                outline: 'none', color: 'white',
+                                fontSize: '0.9rem'
                             }}
                         />
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', color: '#6b7280' }}>
-                        <Bell size={20} style={{ cursor: 'pointer' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', color: 'white' }}>
+                        <div style={{ position: 'relative', cursor: 'pointer' }}>
+                            <Bell size={20} />
+                            <span style={{ position: 'absolute', top: '-2px', right: '-2px', width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%' }}></span>
+                        </div>
                         <HelpCircle size={20} style={{ cursor: 'pointer' }} />
-                        <RotateCcw size={20} style={{ cursor: 'pointer' }} />
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden', border: '2px solid #e5e7eb' }}>
-                            <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" alt="User" style={{ width: '100%', height: '100%' }} />
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(255, 255, 255, 0.2)' }}>
+                            <img src={user?.avatar || "https://i.pravatar.cc/150?u=a042581f4e29026024d"} alt="User" style={{ width: '100%', height: '100%' }} />
                         </div>
                     </div>
                 </header>
@@ -175,145 +181,151 @@ const WorkerDashboard = () => {
                 {/* Dashboard Content */}
                 <div style={{ flex: 1, overflowY: 'auto', padding: '2rem' }}>
 
-                    {/* Progress Card */}
-                    <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem', border: '1px solid #e5e7eb' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                            <CheckCircle2 size={20} color="#15803d" />
-                            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600', color: '#111827' }}>
+                    {/* Progress Card - Glassmorphism */}
+                    <div style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem',
+                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                            <CheckCircle2 size={22} color="#4ade80" />
+                            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600', color: 'white' }}>
                                 Tasks completed today: {tasksCompleted} / {totalTasks}
                             </h3>
                         </div>
-                        <div style={{ height: '8px', width: '100%', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div style={{ width: `${(tasksCompleted / totalTasks) * 100}%`, height: '100%', background: '#15803d', borderRadius: '4px' }} />
+                        <div style={{ height: '8px', width: '100%', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ width: `${(tasksCompleted / totalTasks) * 100}%`, height: '100%', background: '#4ade80', borderRadius: '4px', boxShadow: '0 0 10px rgba(74, 222, 128, 0.5)' }} />
                         </div>
                     </div>
 
                     {/* Split View */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 400px', gap: '1.5rem', height: 'calc(100vh - 250px)' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem', height: 'calc(100vh - 280px)' }}>
 
                         {/* LEFT: Map & Task List */}
                         {activeTab === 'total_reports' ? (
-                            <div style={{ gridColumn: 'span 2', background: 'white', borderRadius: '16px', padding: '1.5rem', border: '1px solid #e5e7eb', overflowY: 'auto' }}>
-                                <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: 'bold' }}>Total Reports History</h2>
-                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <div style={{ gridColumn: 'span 2', background: 'rgba(0, 0, 0, 0.3)', backdropFilter: 'blur(10px)', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(255, 255, 255, 0.1)', overflowY: 'auto' }}>
+                                <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>Total Reports History</h2>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
                                     <thead>
-                                        <tr style={{ borderBottom: '2px solid #f3f4f6', textAlign: 'left' }}>
-                                            <th style={{ padding: '1rem', color: '#6b7280' }}>ID</th>
-                                            <th style={{ padding: '1rem', color: '#6b7280' }}>Title</th>
-                                            <th style={{ padding: '1rem', color: '#6b7280' }}>Location</th>
-                                            <th style={{ padding: '1rem', color: '#6b7280' }}>Status</th>
-                                            <th style={{ padding: '1rem', color: '#6b7280' }}>Date</th>
+                                        <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'left' }}>
+                                            <th style={{ padding: '1rem', color: 'rgba(255, 255, 255, 0.6)' }}>ID</th>
+                                            <th style={{ padding: '1rem', color: 'rgba(255, 255, 255, 0.6)' }}>Title</th>
+                                            <th style={{ padding: '1rem', color: 'rgba(255, 255, 255, 0.6)' }}>Location</th>
+                                            <th style={{ padding: '1rem', color: 'rgba(255, 255, 255, 0.6)' }}>Status</th>
+                                            <th style={{ padding: '1rem', color: 'rgba(255, 255, 255, 0.6)' }}>Date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {issues.map((issue, idx) => (
-                                            <tr key={issue._id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                                            <tr key={issue._id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
                                                 <td style={{ padding: '1rem', fontWeight: '600' }}>#{idx + 1}</td>
                                                 <td style={{ padding: '1rem' }}>{issue.title}</td>
                                                 <td style={{ padding: '1rem' }}>{issue.location?.address}</td>
                                                 <td style={{ padding: '1rem' }}>
                                                     <span style={{
                                                         padding: '0.25rem 0.75rem', borderRadius: '99px', fontSize: '0.75rem', fontWeight: '600',
-                                                        background: issue.status === 'Resolved' ? '#dcfce7' : '#fee2e2',
-                                                        color: issue.status === 'Resolved' ? '#166534' : '#991b1b'
+                                                        background: issue.status === 'Resolved' ? 'rgba(74, 222, 128, 0.2)' : 'rgba(248, 113, 113, 0.2)',
+                                                        color: issue.status === 'Resolved' ? '#4ade80' : '#f87171'
                                                     }}>
                                                         {issue.status}
                                                     </span>
                                                 </td>
-                                                <td style={{ padding: '1rem', color: '#6b7280' }}>{new Date(issue.updatedAt).toLocaleDateString()}</td>
+                                                <td style={{ padding: '1rem', color: 'rgba(255, 255, 255, 0.6)' }}>{new Date(issue.updatedAt).toLocaleDateString()}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
                         ) : (
-                            <>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                    {/* "Map" Placeholder */}
-                                    <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e5e7eb', overflow: 'hidden', flex: 1, position: 'relative' }}>
-                                        <div style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <MapPin size={18} color="#15803d" />
-                                            <span style={{ fontWeight: '600', color: '#111827' }}>Live task map</span>
-                                        </div>
-                                        <div style={{ height: '300px', background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            {/* Simulated Map Visual */}
-                                            <div style={{ textAlign: 'center', color: '#6b7280' }}>
-                                                <MapIcon size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-                                                <p>Map Visualization</p>
-                                            </div>
-                                            {/* Overlay Markers just for visuals */}
-                                            <div style={{ position: 'absolute', top: '40%', left: '50%', color: '#15803d' }}><MapPin size={32} fill="#dcfce7" /></div>
-                                            <div style={{ position: 'absolute', top: '60%', left: '30%', color: '#9ca3af' }}><MapPin size={24} /></div>
-                                        </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                {/* "Map" Placeholder */}
+                                <div style={{ background: 'rgba(0, 0, 0, 0.3)', backdropFilter: 'blur(10px)', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)', overflow: 'hidden', flex: 1, position: 'relative' }}>
+                                    <div style={{ padding: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <MapPin size={18} color="#4ade80" />
+                                        <span style={{ fontWeight: '600', color: 'white' }}>Live task map</span>
                                     </div>
-
-                                    {/* Task List (Scrollable) */}
-                                    <div style={{ flex: 1, overflowY: 'auto' }}>
-                                        {issues.map(issue => (
-                                            <div
-                                                key={issue._id}
-                                                onClick={() => setSelectedIssue(issue)}
-                                                style={{
-                                                    background: selectedIssue?._id === issue._id ? '#f0fdf4' : 'white',
-                                                    borderRadius: '12px', padding: '1rem',
-                                                    border: selectedIssue?._id === issue._id ? '1px solid #166534' : '1px solid #e5e7eb',
-                                                    marginBottom: '1rem', cursor: 'pointer',
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-                                                }}
-                                            >
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                    <div style={{
-                                                        width: '40px', height: '40px', borderRadius: '8px',
-                                                        background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                                    }}>
-                                                        <ChevronDown color={selectedIssue?._id === issue._id ? '#166534' : '#6b7280'} />
-                                                    </div>
-                                                    <div>
-                                                        <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600', color: '#111827' }}>{issue.title}</h4>
-                                                        <p style={{ margin: 0, fontSize: '0.8rem', color: '#6b7280' }}>{issue.location?.address}</p>
-                                                    </div>
-                                                </div>
-                                                <span style={{
-                                                    fontSize: '0.75rem', fontWeight: '600',
-                                                    padding: '0.25rem 0.5rem', borderRadius: '4px',
-                                                    background: issue.status === 'Pending' ? '#fee2e2' : '#dcfce7',
-                                                    color: issue.status === 'Pending' ? '#991b1b' : '#166534'
-                                                }}>
-                                                    {issue.status}
-                                                </span>
-                                            </div>
-                                        ))}
+                                    <div style={{ height: '300px', background: 'rgba(0, 0, 0, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <div style={{ textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)' }}>
+                                            <MapIcon size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+                                            <p>Map Visualization</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </>
+
+                                {/* Task List */}
+                                <div style={{ flex: 1, overflowY: 'auto' }}>
+                                    {issues.map(issue => (
+                                        <div
+                                            key={issue._id}
+                                            onClick={() => setSelectedIssue(issue)}
+                                            style={{
+                                                background: selectedIssue?._id === issue._id ? 'rgba(74, 222, 128, 0.2)' : 'rgba(0, 0, 0, 0.3)',
+                                                backdropFilter: 'blur(10px)',
+                                                borderRadius: '12px', padding: '1rem',
+                                                border: selectedIssue?._id === issue._id ? '1px solid #4ade80' : '1px solid rgba(255, 255, 255, 0.1)',
+                                                marginBottom: '1rem', cursor: 'pointer',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <div style={{
+                                                    width: '40px', height: '40px', borderRadius: '8px',
+                                                    background: 'rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                                }}>
+                                                    <ChevronDown color={selectedIssue?._id === issue._id ? '#4ade80' : 'rgba(255, 255, 255, 0.7)'} />
+                                                </div>
+                                                <div>
+                                                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: 'white' }}>{issue.title}</h4>
+                                                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.6)' }}>{issue.location?.address}</p>
+                                                </div>
+                                            </div>
+                                            <span style={{
+                                                fontSize: '0.75rem', fontWeight: '600',
+                                                padding: '0.25rem 0.5rem', borderRadius: '4px',
+                                                background: issue.status === 'Pending' ? 'rgba(248, 113, 113, 0.2)' : 'rgba(74, 222, 128, 0.2)',
+                                                color: issue.status === 'Pending' ? '#f87171' : '#4ade80'
+                                            }}>
+                                                {issue.status}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         )}
 
                         {/* RIGHT: Task Details (Selected Issue) */}
                         {selectedIssue ? (
-                            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
-                                {/* Header */}
-                                <div style={{ padding: '1.5rem', borderBottom: '1px solid #f3f4f6' }}>
+                            <div style={{
+                                background: 'rgba(0, 0, 0, 0.3)',
+                                backdropFilter: 'blur(10px)',
+                                borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)',
+                                display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto'
+                            }}>
+                                {/* Details Header */}
+                                <div style={{ padding: '1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                                        <div style={{ background: '#fee2e2', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <div style={{ width: '16px', height: '16px', border: '2px solid #ef4444', borderRadius: '2px' }} />
+                                        <div style={{ background: 'rgba(248, 113, 113, 0.2)', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <div style={{ width: '14px', height: '14px', background: '#f87171', borderRadius: '2px' }} />
                                         </div>
                                         <div style={{ flex: 1, paddingLeft: '1rem' }}>
-                                            <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem', fontWeight: '700', color: '#111827', lineHeight: '1.4' }}>
+                                            <h2 style={{ margin: '0 0 0.5rem', fontSize: '1.25rem', fontWeight: '700', color: 'white', lineHeight: '1.4' }}>
                                                 {selectedIssue.title}
                                             </h2>
-                                            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280', lineHeight: '1.5' }}>
+                                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)', lineHeight: '1.5' }}>
                                                 {selectedIssue.ai_enhanced_description || selectedIssue.original_description}
                                             </p>
                                         </div>
-                                        <ChevronUp size={20} color="#9ca3af" />
+                                        <ChevronUp size={20} color="rgba(255, 255, 255, 0.5)" />
                                     </div>
 
                                     <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '3rem' }}>
-                                        <span style={{ fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.75rem', background: '#fee2e2', color: '#991b1b', borderRadius: '20px' }}>High</span>
-                                        <span style={{ fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.75rem', background: '#f3f4f6', color: '#374151', borderRadius: '20px' }}>Pending</span>
+                                        <span style={{ fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.75rem', background: 'rgba(248, 113, 113, 0.2)', color: '#f87171', borderRadius: '20px' }}>High Priority</span>
+                                        <span style={{ fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.75rem', background: 'rgba(255, 255, 255, 0.1)', color: 'white', borderRadius: '20px' }}>Pending</span>
                                     </div>
 
-                                    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', fontSize: '0.8rem', color: '#4b5563' }}>
+                                    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1.5rem', fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.7)' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                             <MapPin size={16} /> {selectedIssue.location?.city || 'Sector 14'}
                                         </div>
@@ -327,17 +339,16 @@ const WorkerDashboard = () => {
                                 </div>
 
                                 <div style={{ padding: '1.5rem' }}>
-
                                     {/* Safety Checklist */}
                                     <div style={{ marginBottom: '2rem' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                                            <CheckSquare size={18} color="#15803d" />
-                                            <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#111827' }}>Safety Checklist</h3>
+                                            <CheckSquare size={18} color="#4ade80" />
+                                            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: 'white' }}>Safety Checklist</h3>
                                         </div>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                             {['Wear high-visibility vest', 'Watch for sharp objects', 'Keep a safe distance from traffic'].map((item, i) => (
-                                                <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontSize: '0.875rem', color: '#374151' }}>
-                                                    <input type="checkbox" style={{ width: '18px', height: '18px', accentColor: '#15803d' }} />
+                                                <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.8)' }}>
+                                                    <input type="checkbox" style={{ width: '18px', height: '18px', accentColor: '#4ade80' }} />
                                                     {item}
                                                 </label>
                                             ))}
@@ -347,19 +358,18 @@ const WorkerDashboard = () => {
                                     {/* Action: Photos */}
                                     <div style={{ marginBottom: '2rem' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                                            <Camera size={18} color="#15803d" />
-                                            <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: '#111827' }}>Before / after photos</h3>
+                                            <Camera size={18} color="#4ade80" />
+                                            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: 'white' }}>Before / after photos</h3>
                                         </div>
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                            {/* Resolution Data Proof Image Logic - simplified for "After" */}
                                             <button
                                                 style={{
-                                                    padding: '1rem', border: '1px dashed #d1d5db', borderRadius: '8px',
+                                                    padding: '1.5rem', border: '1px dashed rgba(255, 255, 255, 0.3)', borderRadius: '8px',
                                                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
-                                                    background: '#f9fafb', cursor: 'pointer', color: '#6b7280'
+                                                    background: 'rgba(255, 255, 255, 0.05)', cursor: 'pointer', color: 'rgba(255, 255, 255, 0.6)'
                                                 }}
                                             >
-                                                <Upload size={20} />
+                                                <Upload size={24} />
                                                 <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>Upload before (0)</span>
                                             </button>
 
@@ -371,9 +381,9 @@ const WorkerDashboard = () => {
                                                 {!resolutionData.proofImage && (
                                                     <div style={{
                                                         position: 'absolute', inset: 0, pointerEvents: 'none',
-                                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: '#6b7280'
+                                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', color: 'rgba(255, 255, 255, 0.6)'
                                                     }}>
-                                                        <Upload size={20} />
+                                                        <Upload size={24} />
                                                         <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>Upload after (0)</span>
                                                     </div>
                                                 )}
@@ -381,14 +391,20 @@ const WorkerDashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Remarks field (Hidden in design but needed for logic) */}
+                                    {/* Remarks field */}
                                     <div style={{ marginBottom: '1.5rem' }}>
-                                        <label style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', display: 'block', marginBottom: '0.5rem' }}>Resolution Remarks</label>
+                                        <label style={{ fontSize: '0.9rem', fontWeight: '600', color: 'rgba(255, 255, 255, 0.8)', display: 'block', marginBottom: '0.5rem' }}>Resolution Remarks</label>
                                         <textarea
                                             placeholder="Add notes about the cleanup..."
                                             value={resolutionData.remark}
                                             onChange={e => setResolutionData({ ...resolutionData, remark: e.target.value })}
-                                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.875rem' }}
+                                            style={{
+                                                width: '100%', padding: '0.75rem', borderRadius: '8px',
+                                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                                background: 'rgba(0, 0, 0, 0.2)',
+                                                color: 'white',
+                                                fontSize: '0.9rem'
+                                            }}
                                             rows={2}
                                         />
                                     </div>
@@ -397,12 +413,14 @@ const WorkerDashboard = () => {
                                     <button
                                         onClick={handleResolveSubmit}
                                         style={{
-                                            width: '100%', padding: '0.875rem',
-                                            background: '#15803d', color: 'white',
+                                            width: '100%', padding: '1rem',
+                                            background: 'linear-gradient(135deg, #22c55e, #16a34a)', // Green Gradient
+                                            color: 'white',
                                             border: 'none', borderRadius: '8px',
-                                            fontSize: '1rem', fontWeight: '600',
+                                            fontSize: '1rem', fontWeight: '700',
                                             cursor: 'pointer',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                                            boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)'
                                         }}
                                     >
                                         <Play size={18} fill="white" /> Complete Task
@@ -410,12 +428,15 @@ const WorkerDashboard = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', borderRadius: '16px', border: '1px solid #e5e7eb', color: '#9ca3af' }}>
+                            <div style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                background: 'rgba(0, 0, 0, 0.3)', backdropFilter: 'blur(10px)',
+                                borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.1)', color: 'rgba(255, 255, 255, 0.4)'
+                            }}>
                                 Select a task to view details
                             </div>
                         )}
                     </div>
-
                 </div>
             </main>
         </div>

@@ -1036,7 +1036,8 @@ const AdminDashboard = () => {
             }}>
                 {/* Header */}
                 <div style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, letterSpacing: '0.5px' }}>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <img src="/logo.jpg" alt="Logo" style={{ height: '32px', width: '32px', objectFit: 'contain', borderRadius: '50%', background: 'white', padding: '2px' }} />
                         SAMADHAN SETU
                     </h2>
                     <button
