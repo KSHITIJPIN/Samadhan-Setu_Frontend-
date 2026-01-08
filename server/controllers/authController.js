@@ -2,6 +2,8 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const fs = require('fs');
+
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
@@ -13,6 +15,8 @@ exports.register = async (req, res) => {
 
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
+        const log = `[ERROR] Register: ${error.message}\n`;
+        fs.appendFileSync('debug_file.log', log);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -34,6 +38,8 @@ exports.login = async (req, res) => {
 
         res.json({ token, user: { id: user._id, name: user.name, role: user.role, email: user.email } });
     } catch (error) {
+        const log = `[ERROR] Login: ${error.message}\n`;
+        fs.appendFileSync('debug_file.log', log);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

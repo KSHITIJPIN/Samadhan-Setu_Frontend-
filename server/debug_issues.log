@@ -92,3 +92,15 @@
 [2026-01-07T23:23:08.787Z] [getIssues] Found 0 issues.
 [2026-01-07T23:23:09.093Z] [getIssues] Fetching for User: 695e86529654ae3999cc546a (worker), Query: {"assignedTo":"695e86529654ae3999cc546a"}
 [2026-01-07T23:23:09.127Z] [getIssues] Found 0 issues.
+[2026-01-08T06:55:30.701Z] [getIssues] Fetching for User: 695f54de47dfe34613cd5615 (admin), Query: {}
+[2026-01-08T06:55:30.705Z] [getIssues] Found 0 issues.
+[2026-01-08T06:56:30.502Z] [getIssues] Fetching for User: 695f54fd47dfe34613cd561d (citizen), Query: {"reportedBy":"695f54fd47dfe34613cd561d"}
+[2026-01-08T06:56:30.504Z] [getIssues] Found 0 issues.
+[2026-01-08T06:57:11.170Z] [createIssue] Request received. Title: pothhole at nh 55, User: 695f54fd47dfe34613cd561d
+[2026-01-08T06:57:11.182Z] [createIssue] SUCCESS. IssueID: 695f554747dfe34613cd5629, ReportedBy: 695f54fd47dfe34613cd561d
+[2026-01-08T06:57:55.172Z] [getIssues] Fetching for User: 695f556c47dfe34613cd562c (worker), Query: {"assignedTo":"695f556c47dfe34613cd562c"}
+[2026-01-08T06:57:55.173Z] [getIssues] Found 0 issues.
+[2026-01-08T06:58:27.681Z] [getIssues] Fetching for User: 695f556c47dfe34613cd562c (worker), Query: {"assignedTo":"695f556c47dfe34613cd562c"}
+[2026-01-08T06:58:27.683Z] [getIssues] Found 0 issues.
+[2026-01-08T06:58:37.770Z] [getIssues] Fetching for User: 695f54de47dfe34613cd5615 (admin), Query: {}
+[2026-01-08T06:58:37.777Z] [getIssues] Found 1 issues.

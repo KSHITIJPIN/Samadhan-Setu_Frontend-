@@ -23,7 +23,9 @@ const Login = () => {
                 default: navigate('/');
             }
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
+            const serverError = err.response?.data?.error;
+            const msg = err.response?.data?.message || 'Login failed';
+            setError(serverError ? `${msg}: ${serverError}` : msg);
         }
     };
 
@@ -78,6 +80,14 @@ const Login = () => {
                         fontSize: '0.9rem'
                     }}>
                         {error}
+                        {/* Display detailed error if available */}
+                        {error.includes('Server error') && (
+                            <div style={{ fontSize: '0.8rem', marginTop: '0.5rem', opacity: 0.8 }}>
+                                {/* We will need to lift the full error object or msg from catch block to state to show it here.
+                                    Actually, let's just make the 'error' state contain the full message.
+                                 */}
+                            </div>
+                        )}
                     </div>
                 )}
 
