@@ -312,3 +312,11 @@
 [2026-01-08T09:53:06.342Z] [getIssues] Found 3 issues.
 [2026-01-08T09:53:19.517Z] [getIssues] Fetching for User: 695f75c262d3c49bae9cb931 (admin), Query: {}
 [2026-01-08T09:53:19.578Z] [getIssues] Found 3 issues.
+[2026-01-09T13:02:05.167Z] [getIssues] Fetching for User: 6960fc49570fa4efcb46b574 (admin), Query: {}
+[2026-01-09T13:02:05.176Z] [getIssues] Found 0 issues.
+[2026-01-09T13:02:05.189Z] [getIssues] Fetching for User: 6960fc49570fa4efcb46b574 (admin), Query: {}
+[2026-01-09T13:02:05.192Z] [getIssues] Found 0 issues.
+[2026-01-09T13:02:36.715Z] [getIssues] Fetching for User: 6960fc63570fa4efcb46b580 (worker), Query: {"assignedTo":"6960fc63570fa4efcb46b580"}
+[2026-01-09T13:02:36.718Z] [getIssues] Found 0 issues.
+[2026-01-09T13:02:36.729Z] [getIssues] Fetching for User: 6960fc63570fa4efcb46b580 (worker), Query: {"assignedTo":"6960fc63570fa4efcb46b580"}
+[2026-01-09T13:02:36.736Z] [getIssues] Found 0 issues.
