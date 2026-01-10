@@ -856,27 +856,38 @@ const AdminDashboard = () => {
 
     // Cost Analysis View
     const renderCostAnalysis = () => {
-        // State to manage editable costs - initializing with mock data if not already present
-        // In a real app this would come from the issues prop directly
-        const [issueCosts, setIssueCosts] = useState(() => {
+        // State to manage editable costs - initialized from issues prop
+        const [issueCosts, setIssueCosts] = useState({});
+
+        // Initialize local state when issues change
+        useEffect(() => {
             const initialCosts = {};
             issues.forEach(issue => {
-                // Deterministic mock cost based on ID char codes
-                const id = issue._id || 'iso';
-                const code = id.charCodeAt(id.length - 1) + id.charCodeAt(id.length - 2);
-                initialCosts[issue._id] = (code * 10) + 500;
+                initialCosts[issue._id] = issue.cost || 0;
             });
-            return initialCosts;
-        });
+            setIssueCosts(initialCosts);
+        }, [issues]);
 
-        const handleCostChange = (id, newCost) => {
+        const handleCostChangeLocal = (id, newCost) => {
             setIssueCosts(prev => ({
                 ...prev,
                 [id]: Number(newCost)
             }));
         };
 
-        const totalCost = Object.values(issueCosts).reduce((a, b) => a + b, 0);
+        const saveCost = async (id) => {
+            try {
+                const cost = issueCosts[id];
+                await import('../services/api').then(module => module.updateIssueCost(id, cost));
+                alert('Cost updated successfully');
+                fetchData(); // Refresh to ensure sync
+            } catch (error) {
+                console.error(error);
+                alert('Failed to update cost');
+            }
+        };
+
+        const totalCost = issues.reduce((acc, issue) => acc + (issue.cost || 0), 0);
 
         return (
             <div>
@@ -941,6 +952,7 @@ const AdminDashboard = () => {
                         <tbody>
                             {issues.map((issue, idx) => {
                                 const isFixed = issue.status === 'Resolved';
+                                // Always allow editing for admin power
                                 return (
                                     <tr key={issue._id} style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
                                         <td style={{ padding: '1rem', fontWeight: '500', color: 'var(--text)' }}>
@@ -948,7 +960,7 @@ const AdminDashboard = () => {
                                             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>{issue.location?.address}</div>
                                         </td>
                                         <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>
-                                            {new Date().toLocaleDateString()} {/* Mock date for now */}
+                                            {new Date(issue.createdAt || Date.now()).toLocaleDateString()}
                                         </td>
                                         <td style={{ padding: '1rem' }}>
                                             <span className={`badge badge-${issue.status.toLowerCase().replace(' ', '-')}`} style={{
@@ -965,15 +977,11 @@ const AdminDashboard = () => {
                                         </td>
                                         <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                                             <span style={{ marginRight: '0.25rem', color: 'var(--text)', fontWeight: '600' }}>₹</span>
-                                            {isFixed ? (
-                                                <span style={{ fontFamily: 'monospace', fontSize: '1rem', fontWeight: '600', color: 'var(--text-muted)' }}>
-                                                    {issueCosts[issue._id]?.toLocaleString()}
-                                                </span>
-                                            ) : (
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                 <input
                                                     type="number"
-                                                    value={issueCosts[issue._id]}
-                                                    onChange={(e) => handleCostChange(issue._id, e.target.value)}
+                                                    value={issueCosts[issue._id] !== undefined ? issueCosts[issue._id] : 0}
+                                                    onChange={(e) => handleCostChangeLocal(issue._id, e.target.value)}
                                                     style={{
                                                         width: '80px',
                                                         padding: '0.25rem',
@@ -984,7 +992,22 @@ const AdminDashboard = () => {
                                                         fontWeight: '600'
                                                     }}
                                                 />
-                                            )}
+                                                <button
+                                                    onClick={() => saveCost(issue._id)}
+                                                    className="btn btn-sm"
+                                                    style={{
+                                                        padding: '0.25rem 0.5rem',
+                                                        fontSize: '0.75rem',
+                                                        background: 'var(--primary)',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    Update
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 );

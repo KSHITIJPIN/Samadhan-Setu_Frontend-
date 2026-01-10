@@ -10,6 +10,7 @@ router.put('/:issueId/assign', authMiddleware(['admin']), issueController.assign
 router.put('/:issueId/resolve', authMiddleware(['worker']), issueController.resolveIssue);
 router.put('/:issueId/verify', authMiddleware(['admin']), issueController.verifyIssue);
 router.put('/:issueId/dismiss', authMiddleware(['admin']), issueController.dismissIssue);
+router.put('/:issueId/cost', authMiddleware(['admin']), issueController.updateCost);
 router.get('/summary', authMiddleware(['admin']), issueController.getSummary);
 
 module.exports = router;

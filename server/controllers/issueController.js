@@ -44,6 +44,23 @@ exports.createIssue = async (req, res) => {
     }
 };
 
+// Update Issue Cost
+exports.updateCost = async (req, res) => {
+    try {
+        const { cost } = req.body;
+        const issue = await Issue.findByIdAndUpdate(
+            req.params.id,
+            { cost },
+            { new: true }
+        );
+        res.json(issue);
+    } catch (error) {
+        // Log locally if possible or just use console.error for Vercel
+        console.error(`[updateCost] ERROR: ${error.message}`);
+        res.status(500).json({ message: 'Error updating cost', error: error.message });
+    }
+};
+
 exports.getIssues = async (req, res) => {
     try {
         // If admin, all issues. If citizen, their issues. If worker, assigned issues.

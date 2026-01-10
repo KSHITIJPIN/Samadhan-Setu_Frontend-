@@ -24,6 +24,7 @@ export const verifyIssue = (id) => API.put(`/issues/${id}/verify`);
 
 // Dismiss Issue (Admin Only)
 export const dismissIssue = (id) => API.put(`/issues/${id}/dismiss`);
+export const updateIssueCost = (id, cost) => API.put(`/issues/${id}/cost`, { cost });
 
 export const getSummary = () => API.get('/issues/summary');
 export const getPublicIssues = () => API.get('/issues/public');

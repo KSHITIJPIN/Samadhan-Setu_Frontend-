@@ -15,6 +15,7 @@ const issueSchema = new mongoose.Schema({
     images: [{ type: String }], // URLs or base64
     status: { type: String, enum: ['Pending', 'In Progress', 'Pending Verification', 'Resolved', 'Failed'], default: 'Pending' },
     severity: { type: String, default: 'Medium' }, // low, medium, high
+    cost: { type: Number, default: 0 },
     recommendedAction: { type: String },
     reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
