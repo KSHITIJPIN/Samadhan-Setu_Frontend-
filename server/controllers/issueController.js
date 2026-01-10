@@ -6,11 +6,9 @@ const path = require('path');
 const LOG_FILE = path.join(__dirname, '../debug_issues.log');
 
 const logToFile = (message) => {
-    try {
-        const timestamp = new Date().toISOString();
-        const logLine = `[${timestamp}] ${message}\n`;
-        fs.appendFileSync(LOG_FILE, logLine);
-    } catch (e) { console.error("Log failed", e); }
+    // Vercel does not support file writing. Using console.log instead.
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${message}`);
 };
 
 exports.createIssue = async (req, res) => {

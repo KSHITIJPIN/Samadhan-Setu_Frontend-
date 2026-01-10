@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         const log = `[ERROR] Register: ${error.message}\n`;
-        fs.appendFileSync('debug_file.log', log);
+        console.error(`[ERROR] Register: ${error.message}`);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -38,8 +38,7 @@ exports.login = async (req, res) => {
 
         res.json({ token, user: { id: user._id, name: user.name, role: user.role, email: user.email } });
     } catch (error) {
-        const log = `[ERROR] Login: ${error.message}\n`;
-        fs.appendFileSync('debug_file.log', log);
+        console.error(`[ERROR] Login: ${error.message}`);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

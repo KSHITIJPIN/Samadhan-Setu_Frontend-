@@ -17,13 +17,8 @@ const authMiddleware = (roles = []) => {
                 return res.status(401).json({ message: 'User not found' });
             }
 
-            const log = `[Auth] User: ${user.email}, Role: ${user.role}, ReqRoles: ${JSON.stringify(roles)}\n`;
-            require('fs').appendFileSync('debug_file.log', log);
-
-            req.user = decoded;
-
             if (roles.length > 0 && !roles.includes(decoded.role)) {
-                require('fs').appendFileSync('debug_file.log', `[Auth] ACCESS DENIED. UserRole: ${decoded.role}, Required: ${JSON.stringify(roles)}\n`);
+                console.warn(`[Auth] ACCESS DENIED. UserRole: ${decoded.role}, Required: ${JSON.stringify(roles)}`);
                 return res.status(403).json({ message: 'Access denied' });
             }
 
