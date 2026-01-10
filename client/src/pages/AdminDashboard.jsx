@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getIssues, getWorkers, assignIssue, getSummary, verifyIssue, dismissIssue, improveIssue } from '../services/api';
+import { getIssues, getWorkers, assignIssue, getSummary, verifyIssue, dismissIssue, improveIssue, getFeedback } from '../services/api';
 import { Users, FileText, CheckCircle, Menu, X, Filter, BarChart2, CheckSquare, Eye, Check, MapPin, Sparkles, AlertTriangle, LayoutGrid, DollarSign, Calendar, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -7,6 +7,7 @@ const AdminDashboard = () => {
     const { t } = useLanguage();
     const [issues, setIssues] = useState([]);
     const [workers, setWorkers] = useState([]);
+    const [feedback, setFeedback] = useState([]);
     const [summary, setSummary] = useState('');
     const [generatedSummary, setGeneratedSummary] = useState(false);
 
@@ -21,9 +22,10 @@ const AdminDashboard = () => {
     }, []);
 
     const fetchData = async () => {
-        const [issuesRes, workersRes] = await Promise.all([getIssues(), getWorkers()]);
+        const [issuesRes, workersRes, feedbackRes] = await Promise.all([getIssues(), getWorkers(), getFeedback()]);
         setIssues(issuesRes.data);
         setWorkers(workersRes.data);
+        setFeedback(feedbackRes.data);
     };
 
     const handleAssign = async (issueId, workerId) => {
@@ -893,6 +895,10 @@ const AdminDashboard = () => {
             .reduce((acc, issue) => acc + (issue.cost || 0), 0);
         const remainingCost = totalCost - utilizedCost;
 
+        // Calculate percentages safely to avoid NaN division by zero
+        const utilizedPercent = totalCost > 0 ? Math.round((utilizedCost / totalCost) * 100) : 0;
+        const remainingPercent = totalCost > 0 ? Math.round((remainingCost / totalCost) * 100) : 0;
+
         return (
             <div>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '2rem' }}>Cost Analysis & Projections</h2>
@@ -913,7 +919,7 @@ const AdminDashboard = () => {
                         borderRadius: '16px'
                     }}>
                         <h3 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0, color: 'var(--text)' }}>₹{utilizedCost.toLocaleString()}</h3>
-                        <p style={{ color: 'var(--text-muted)', margin: 0 }}>Funds Utilized (YTD)</p>
+                        <p style={{ color: 'var(--text-muted)', margin: 0 }}>Funds Utilized (YTD) <span style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>({utilizedPercent}%)</span></p>
                     </div>
                     <div className="glass-card" style={{
                         padding: '1.5rem',
@@ -921,7 +927,7 @@ const AdminDashboard = () => {
                         borderRadius: '16px'
                     }}>
                         <h3 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0, color: 'var(--text)' }}>₹{remainingCost.toLocaleString()}</h3>
-                        <p style={{ color: 'var(--text-muted)', margin: 0 }}>Projected Remaining (Pending)</p>
+                        <p style={{ color: 'var(--text-muted)', margin: 0 }}>Projected Remaining <span style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>({remainingPercent}%)</span></p>
                     </div>
                 </div>
 
@@ -973,35 +979,54 @@ const AdminDashboard = () => {
                                         <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                                             <span style={{ marginRight: '0.25rem', color: 'var(--text)', fontWeight: '600' }}>₹</span>
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                <input
-                                                    type="number"
-                                                    value={issueCosts[issue._id] !== undefined ? issueCosts[issue._id] : 0}
-                                                    onChange={(e) => handleCostChangeLocal(issue._id, e.target.value)}
-                                                    style={{
-                                                        width: '80px',
-                                                        padding: '0.25rem',
-                                                        borderRadius: '4px',
-                                                        border: '1px solid var(--border)',
-                                                        textAlign: 'right',
+                                                {isFixed ? (
+                                                    <span style={{
                                                         fontFamily: 'monospace',
-                                                        fontWeight: '600'
-                                                    }}
-                                                />
-                                                <button
-                                                    onClick={() => saveCost(issue._id)}
-                                                    className="btn btn-sm"
-                                                    style={{
+                                                        fontSize: '1rem',
+                                                        fontWeight: '600',
+                                                        color: 'var(--text)', // Locked color
                                                         padding: '0.25rem 0.5rem',
-                                                        fontSize: '0.75rem',
-                                                        background: 'var(--primary)',
-                                                        color: 'white',
-                                                        border: 'none',
+                                                        background: 'var(--bg)',
                                                         borderRadius: '4px',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                >
-                                                    Update
-                                                </button>
+                                                        border: '1px solid var(--border)'
+                                                    }}>
+                                                        {issueCosts[issue._id]?.toLocaleString() || 0}
+                                                    </span>
+                                                ) : (
+                                                    <>
+                                                        <input
+                                                            type="number"
+                                                            value={issueCosts[issue._id] !== undefined ? issueCosts[issue._id] : 0}
+                                                            onChange={(e) => handleCostChangeLocal(issue._id, e.target.value)}
+                                                            style={{
+                                                                width: '80px',
+                                                                padding: '0.25rem',
+                                                                borderRadius: '4px',
+                                                                border: '1px solid var(--border)',
+                                                                textAlign: 'right',
+                                                                fontFamily: 'monospace',
+                                                                fontWeight: '600',
+                                                                background: 'var(--bg)',
+                                                                color: 'var(--text)'
+                                                            }}
+                                                        />
+                                                        <button
+                                                            onClick={() => saveCost(issue._id)}
+                                                            className="btn btn-sm"
+                                                            style={{
+                                                                padding: '0.25rem 0.5rem',
+                                                                fontSize: '0.75rem',
+                                                                background: 'var(--primary)',
+                                                                color: 'white',
+                                                                border: 'none',
+                                                                borderRadius: '4px',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                        >
+                                                            Update
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
@@ -1020,6 +1045,7 @@ const AdminDashboard = () => {
         { id: 'filter_reports', label: 'Filter Reports', icon: <Filter size={22} /> },
         { id: 'cost_analysis', label: 'Cost Analysis', icon: <DollarSign size={22} /> },
         { id: 'worker_management', label: 'Worker Management', icon: <Users size={22} /> },
+        { id: 'user_feedback', label: 'User Feedback', icon: <Users size={22} /> },
         // Year Reports is hardcoded in the render function as a placeholder for now, or we can add it here if we had a view for it.
         // For visual match, I'll keep the view switching logic simple.
         { id: 'verify_solutions', label: 'Verify Solutions', icon: <Check size={22} /> }
@@ -1177,6 +1203,7 @@ const AdminDashboard = () => {
                 {activeView === 'worker_management' && renderWorkerManagement()}
                 {activeView === 'cost_analysis' && renderCostAnalysis()}
                 {activeView === 'verify_solutions' && renderVerifySolutions()}
+                {activeView === 'user_feedback' && renderUserFeedback()}
 
             </div>
         </div >

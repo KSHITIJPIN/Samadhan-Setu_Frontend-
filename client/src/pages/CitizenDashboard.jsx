@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import WeatherWidget from '../components/WeatherWidget';
 import DashboardGrid from '../components/DashboardGrid';
 import { useLanguage } from '../context/LanguageContext';
+import FeedbackModal from '../components/FeedbackModal';
 
 const CitizenDashboard = () => {
     const { user } = useAuth();
     const { t } = useLanguage();
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
     return (
         <div className="fade-in" style={{ color: 'white' }}>
@@ -22,7 +24,26 @@ const CitizenDashboard = () => {
 
                 <WeatherWidget />
 
-                <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Quick Actions</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h2 style={{ fontSize: '1.2rem', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Quick Actions</h2>
+                    <button
+                        onClick={() => setIsFeedbackOpen(true)}
+                        className="glass-card"
+                        style={{
+                            padding: '0.5rem 1rem',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                            borderRadius: '20px',
+                            cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', gap: '0.5rem',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            background: 'rgba(255,255,255,0.1)',
+                            color: 'white'
+                        }}
+                    >
+                        Share Feedback
+                    </button>
+                </div>
                 {/* DashboardGrid handles its own internal grid, but we remove its internal margin/width constraints 
                     if we want IT to align perfectly inside THIS container. 
                     However, checking DashboardGrid logic: it has maxWidth 900px margin 0 auto. 
@@ -48,6 +69,8 @@ const CitizenDashboard = () => {
                 <div style={{ marginLeft: '-1rem', marginRight: '-1rem' }}> {/* Negative margin to offset grid padding if needed? No, DashboardGrid handles padding. */}
                     <DashboardGrid />
                 </div>
+
+                <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
             </div>
         </div>
     );

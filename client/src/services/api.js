@@ -29,6 +29,7 @@ export const updateIssueCost = (id, cost) => API.put(`/issues/${id}/cost`, { cos
 export const getSummary = () => API.get('/issues/summary');
 export const getPublicIssues = () => API.get('/issues/public');
 export const submitFeedback = (data) => API.post('/feedback', data);
+export const getFeedback = () => API.get('/feedback');
 
 export const improveIssue = async (text) => {
     const res = await API.post("/admin/ai/improve-issue", { rawText: text });
